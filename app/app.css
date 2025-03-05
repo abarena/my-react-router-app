@@ -406,10 +406,55 @@ i {
   width: 100%;
 }
 
-#about {
+#login-form {
   flex: 1;
-  padding: 2rem 4rem;
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.error {
+  color: red;
+}
+
+#textfield {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 12px;
+}
+
+
+#textfield label {
+  width: 100px;
+  font-weight: 600;
+}
+
+#textfield input {
+  width: 300px;
+}
+
+.login-btn {
+  width: 400px;
+  margin: 12px;
+}
+
+
+#logout-form {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#logout-form button {
+  width: 200px;
+  margin-bottom: 20px;
 }
 
 #loading-splash {

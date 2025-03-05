@@ -1,19 +1,25 @@
-import { Form, Link, NavLink, Outlet, useNavigation, useSubmit } from "react-router";
+import { Form, Link, NavLink, Outlet, redirect, useNavigation, useSubmit } from "react-router";
 import { getContacts } from "../data";
 import type { Route } from "./+types/sidebar";
 import { useEffect } from "react";
+import { sessionStorage } from "../sessions.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
+  const session = await sessionStorage.getSession(request.headers.get("cookie"));
+  const user = session.get("user");
+  if (!user) {
+    return redirect("/login");
+  }
   const url = new URL(request.url);
   const q = url.searchParams.get("q");
   const contacts = await getContacts(q);
-  return { contacts, q };
+  return { contacts, q, user };
 }
 
 export default function SidebarLayout({
   loaderData,
 }: Route.ComponentProps) {
-  const { contacts, q } = loaderData;
+  const { contacts, q, user } = loaderData;
   const navigation = useNavigation();
   const submit = useSubmit();
   const searching = navigation.location && 
@@ -31,6 +37,7 @@ export default function SidebarLayout({
       <div id="sidebar">
         <h1>
           <Link to="about">React Router Contacts</Link>
+          <Link to="logout" style={{ marginLeft: 3}}>LOGOUT</Link>
         </h1>
         <div>
           <Form
@@ -62,6 +69,7 @@ export default function SidebarLayout({
             <button type="submit">New</button>
           </Form>
         </div>
+        <div>User: {user.username}</div>
         <nav>
           {contacts.length ? (
             <ul>
