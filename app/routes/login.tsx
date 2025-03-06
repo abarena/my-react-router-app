@@ -2,7 +2,7 @@ import { data, Form, redirect } from "react-router";
 import type { Route } from "./+types/login";
 
 import { getSession, commitSession } from "../sessions.server";
-import { authenticator, FORM_STRATEGY } from "../services/auth.server";
+import { authenticator, FORM_STRATEGY } from "../services/auth.service";
 
 export async function loader({
   request,

@@ -6,7 +6,7 @@ import { FormStrategy } from "remix-auth-form";
 
 export const FORM_STRATEGY = "form-strategy";
 
-export let authenticator = new Authenticator<AuthUser>();
+export const authenticator = new Authenticator<AuthUser>();
 
 authenticator.use(
   new FormStrategy(async ({ form }) => {
