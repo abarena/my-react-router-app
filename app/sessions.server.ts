@@ -14,12 +14,12 @@ const { getSession, commitSession, destroySession } =
     {
       cookie: {
         name: "__session",
-        secrets: ["s3cret"],
+        secrets: ["s3cret!"],
         sameSite: "lax",
         path: "/",
         httpOnly: true,
         secure: true,
-      },
+      }
     }
   );
 

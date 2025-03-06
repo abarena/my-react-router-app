@@ -42,7 +42,12 @@ export async function action({
 
     return redirect("/", {
       headers: {
-        "Set-Cookie": await commitSession(session),
+        "Set-Cookie": await commitSession(session, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "lax",
+          maxAge: 60, // session will last 60s
+        }),
       },
     });
   } catch (error) {

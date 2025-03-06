@@ -1,6 +1,14 @@
 import { Form, Link, redirect } from "react-router";
 import type { Route } from "./+types/logout";
-import { destroySession, getSession } from "../sessions.server";
+import { checkUserSession, destroySession, getSession } from "../sessions.server";
+
+export async function loader({ request }: Route.LoaderArgs){
+  try {
+    await checkUserSession(request);
+  } catch (error) {
+    return error;
+  }
+};
 
 export async function action({
   request,
