@@ -1,4 +1,4 @@
-import { createCookieSessionStorage } from "react-router";
+import { createCookieSessionStorage, redirect } from "react-router";
 import type { AuthUser } from "./models/user.model";
 
 type SessionData = {
@@ -9,7 +9,7 @@ type SessionFlashData = {
   error: string;
 };
 
-export const sessionStorage =
+const { getSession, commitSession, destroySession } =
   createCookieSessionStorage<SessionData, SessionFlashData>(
     {
       cookie: {
@@ -22,3 +22,14 @@ export const sessionStorage =
       },
     }
   );
+
+export async function checkUserSession(request: Request) {
+  const session = await getSession(request.headers.get("Cookie"));
+  const user = session.get("user");
+  if (!user) {
+    throw redirect("/login");
+  }
+  return user;
+}
+
+export { getSession, commitSession, destroySession };

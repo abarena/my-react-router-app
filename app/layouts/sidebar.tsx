@@ -1,15 +1,11 @@
-import { Form, Link, NavLink, Outlet, redirect, useNavigation, useSubmit } from "react-router";
+import { Form, Link, NavLink, Outlet, useNavigation, useSubmit } from "react-router";
 import { getContacts } from "../data";
 import type { Route } from "./+types/sidebar";
 import { useEffect } from "react";
-import { sessionStorage } from "../sessions.server";
+import { checkUserSession } from "../sessions.server";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await sessionStorage.getSession(request.headers.get("cookie"));
-  const user = session.get("user");
-  if (!user) {
-    return redirect("/login");
-  }
+  const user = await checkUserSession(request);
   const url = new URL(request.url);
   const q = url.searchParams.get("q");
   const contacts = await getContacts(q);

@@ -3,19 +3,22 @@ import type { AuthUser } from "app/models/user.model";
 import { FormStrategy } from "remix-auth-form";
 
 
+
+export const FORM_STRATEGY = "form-strategy";
+
 export let authenticator = new Authenticator<AuthUser>();
 
 authenticator.use(
   new FormStrategy(async ({ form }) => {
     let email = form.get("email");
     let password = form.get("password");
-    return await loginUser(email, password);
+    return await validateCredentials(email, password);
   }),
-  "user-pass"
+  FORM_STRATEGY
 );
 
 
-export const loginUser = (
+export const validateCredentials = (
   email: FormDataEntryValue | null,
   password: FormDataEntryValue | null
 ): Promise<AuthUser> => {

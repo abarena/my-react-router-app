@@ -1,13 +1,13 @@
 import { data, Form, redirect } from "react-router";
 import type { Route } from "./+types/login";
 
-import { sessionStorage } from "../sessions.server";
-import { authenticator } from "../services/auth.server";
+import { getSession, commitSession } from "../sessions.server";
+import { authenticator, FORM_STRATEGY } from "../services/auth.server";
 
 export async function loader({
   request,
 }: Route.LoaderArgs) {
-  const session = await sessionStorage.getSession(request.headers.get("Cookie"));
+  const session = await getSession(request.headers.get("Cookie"));
 
   if (session.has("user")) {
     return redirect("/");
@@ -17,7 +17,7 @@ export async function loader({
     { error: session.get("error") },
     {
       headers: {
-        "Set-Cookie": await sessionStorage.commitSession(session),
+        "Set-Cookie": await commitSession(session),
       },
     }
   );
@@ -26,18 +26,23 @@ export async function loader({
 export async function action({
   request,
 }: Route.ActionArgs) {
-  const session = await sessionStorage.getSession(request.headers.get("cookie"));
+  const session = await getSession(request.headers.get("Cookie"));
   try {
-    const user = await authenticator.authenticate("user-pass", request);
+    const user = await authenticator.authenticate(FORM_STRATEGY, request);
     if (!user) {
       session.flash("error", "Invalid username/password");
+      return redirect("/", {
+        headers: {
+          "Set-Cookie": await commitSession(session),
+        },
+      });
     }
-
+    
     session.set("user", user);
 
     return redirect("/", {
       headers: {
-        "Set-Cookie": await sessionStorage.commitSession(session),
+        "Set-Cookie": await commitSession(session),
       },
     });
   } catch (error) {
@@ -45,7 +50,7 @@ export async function action({
       session.flash("error", error.message);
       return redirect("/login", {
         headers: {
-          "Set-Cookie": await sessionStorage.commitSession(session),
+          "Set-Cookie": await commitSession(session),
         },
       });
     }
